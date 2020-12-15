@@ -44,39 +44,45 @@ public class PostAdapter  extends RecyclerView.Adapter<PostAdapter.MyHolder>{
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
 
-        String usid = postList.get(position).getUid();
-        String usEmail = postList.get(position).getuEmail();
-        String usName = postList.get(position).getuName();
-        String usDp = postList.get(position).getuDp();
-        String postId = postList.get(position).getpId();
-        String postTitle = postList.get(position).getpTitle();
-        String postDes = postList.get(position).getpDes();
-        String postImage = postList.get(position).getpImage();
-        String postTimeStamp = postList.get(position).getpTime();
+        String uid = postList.get(position).getUid();
+        String uEmail = postList.get(position).getuEmail();
+        String uName = postList.get(position).getuName();
+        String uDp = postList.get(position).getuDp();
+        String pId = postList.get(position).getpId();
+        String pTitle = postList.get(position).getpTitle();
+        String pDescr = postList.get(position).getpDescr();
+        String pImage = postList.get(position).getpImage();
+        String pTimeStamp = postList.get(position).getpTime();
 
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        calendar.setTimeInMillis(Long.parseLong(postTimeStamp));
+        calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
         String postTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
-        holder.uName.setText(usName);
-        holder.pTime.setText(postTime);
-        holder.pTitle.setText(postTitle);
-        holder.pDes.setText(postDes);
-
+        holder.usName.setText(uName);
+        holder.postTime.setText(postTime);
+        holder.postTitle.setText(pTitle);
+        holder.postDes.setText(pDescr);
 
         try {
-            Picasso.get().load(usDp).placeholder(R.drawable.ic_default_img).into(holder.uPic);
+            Picasso.get().load(uDp).placeholder(R.drawable.ic_default_img).into(holder.usPic);
         }
         catch (Exception e) {
 
         }
 
-        try {
-            Picasso.get().load(postImage).into(holder.pImage);
+        if (pImage.equals("noImage")) {
+            holder.postImage.setVisibility(View.GONE);
         }
-        catch (Exception e) {
+        else {
 
+            try {
+                Picasso.get().load(pImage).into(holder.postImage);
+            }
+            catch (Exception e) {
+
+            }
         }
+
 
         holder.moreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,27 +128,25 @@ public class PostAdapter  extends RecyclerView.Adapter<PostAdapter.MyHolder>{
 
     class MyHolder extends RecyclerView.ViewHolder{
 
-        ImageView uPic, pImage;
-        TextView uName, pTime, pTitle, pDes, pLike;
+        ImageView usPic, postImage;
+        TextView usName, postTime, postTitle, postDes, postLike;
         ImageButton moreBtn;
         Button likeBtn, commentBtn, shareBtn;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
 
-            uPic = itemView.findViewById(R.id.uPic);
-            pImage = itemView.findViewById(R.id.pImage);
-            uName = itemView.findViewById(R.id.uName);
-            pTime = itemView.findViewById(R.id.pTime);
-            pTitle = itemView.findViewById(R.id.pTitle);
-            pDes = itemView.findViewById(R.id.pDes);
-            pLike = itemView.findViewById(R.id.pLike);
+            usPic = itemView.findViewById(R.id.uPic);
+            postImage = itemView.findViewById(R.id.pImage);
+            usName = itemView.findViewById(R.id.uName);
+            postTime = itemView.findViewById(R.id.pTime);
+            postTitle = itemView.findViewById(R.id.pTitle);
+            postDes = itemView.findViewById(R.id.pDes);
+            postLike = itemView.findViewById(R.id.pLike);
             moreBtn = itemView.findViewById(R.id.more_btn);
             likeBtn = itemView.findViewById(R.id.like_btn);
             commentBtn = itemView.findViewById(R.id.comment_btn);
             shareBtn = itemView.findViewById(R.id.share_btn);
-
-
 
         }
     }

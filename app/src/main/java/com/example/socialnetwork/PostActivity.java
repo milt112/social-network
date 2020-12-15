@@ -163,6 +163,7 @@ public class PostActivity extends AppCompatActivity {
                                     hashMap.put("uName", name);
                                     hashMap.put("uDp", dp);
                                     hashMap.put("pId", timeStamp);
+                                    hashMap.put("pTitle", title);
                                     hashMap.put("pDescr", description);
                                     hashMap.put("pImage", downloadUri);
                                     hashMap.put("pTime", timeStamp);
@@ -207,6 +208,7 @@ public class PostActivity extends AppCompatActivity {
                 hashMap.put("uName", name);
                 hashMap.put("uDp", dp);
                 hashMap.put("pId", timeStamp);
+                hashMap.put("pTitle", title);
                 hashMap.put("pDescr", description);
                 hashMap.put("pImage", "noImage");
                 hashMap.put("pTime", timeStamp);

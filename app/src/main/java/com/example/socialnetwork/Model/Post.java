@@ -2,15 +2,15 @@ package com.example.socialnetwork.Model;
 
 public class Post {
 
-    String pId, pTitle, pDes, pImage, pTime, uid, uEmail, uDp, uName;
+    String pId, pTitle, pDescr, pImage, pTime, uid, uEmail, uDp, uName;
 
     public Post() {
     }
 
-    public Post(String pId, String pTitle, String pDes, String pImage, String pTime, String uid, String uEmail, String uDp, String uName) {
+    public Post(String pId, String pTitle, String pDescr, String pImage, String pTime, String uid, String uEmail, String uDp, String uName) {
         this.pId = pId;
         this.pTitle = pTitle;
-        this.pDes = pDes;
+        this.pDescr = pDescr;
         this.pImage = pImage;
         this.pTime = pTime;
         this.uid = uid;
@@ -35,12 +35,12 @@ public class Post {
         this.pTitle = pTitle;
     }
 
-    public String getpDes() {
-        return pDes;
+    public String getpDescr() {
+        return pDescr;
     }
 
-    public void setpDes(String pDes) {
-        this.pDes = pDes;
+    public void setpDescr(String pDescr) {
+        this.pDescr = pDescr;
     }
 
     public String getpImage() {
