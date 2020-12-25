@@ -81,7 +81,7 @@ public class HomeFragment extends Fragment {
                 postList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post post = ds.getValue(Post.class);
-                    postList.add(post);
+                    postList.add(post); 
 
                     postAdapter = new PostAdapter(getActivity(), postList);
 
@@ -91,7 +91,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
