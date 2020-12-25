@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.socialnetwork">
+    package="com.example.socialnetwork" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -12,20 +12,24 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SocialNetwork">
-        <activity android:name=".UsProfileActivity"></activity>
-        <!-- <activity android:name=".BaseActivity"></activity> -->
-        <activity android:name=".PostActivity" />
-        <activity android:name=".DashboardActivity">
+        android:theme="@style/Theme.SocialNetwork" >
+        <activity android:name=".Activities.PostToGroupActivity" />
+        <activity android:name=".Activities.PostDetailActivity" />
+        <activity android:name=".Activities.PeopleActivity" />
+        <activity android:name=".Activities.EditPostActivity" />
+        <activity android:name=".Activities.CreateGroupActivity" />
+        <activity android:name=".Activities.GroupActivity" /> <!-- <activity android:name=".BaseActivity"></activity> -->
+        <activity android:name=".Activities.PostActivity" />
+        <activity android:name=".Activities.DashboardActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".Activities.LoginActivity" />
+        <activity android:name=".Activities.RegisterActivity" />
+        <activity android:name=".Activities.MainActivity" />
     </application>
 
 </manifest>

@@ -1,5 +1,7 @@
 package com.example.socialnetwork.Model;
 
+import java.util.HashMap;
+
 public class User {
     String name, email, search, phone, image, cover, uid;
 
@@ -70,5 +72,16 @@ public class User {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public HashMap<String, String> toMap() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("email", email);
+        map.put("uid", uid);
+        map.put("name", "");
+        map.put("phone", "");
+        map.put("image", "");
+        map.put("cover", "");
+        return map;
     }
 }

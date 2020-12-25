@@ -1,6 +1,5 @@
 package com.example.socialnetwork.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,8 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.socialnetwork.Adapter.UserAdapter;
-import com.example.socialnetwork.DashboardActivity;
-import com.example.socialnetwork.MainActivity;
 import com.example.socialnetwork.Model.User;
 import com.example.socialnetwork.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -100,7 +97,7 @@ public class FriendFragment extends Fragment {
         });
     }
 
-    private void searchUser(String s) {
+    protected void searchUser(String s) {
         FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
@@ -115,7 +112,7 @@ public class FriendFragment extends Fragment {
                     if (!user.getUid().equals(fUser.getUid())) {
 
                         if (user.getName().toLowerCase().contains(s.toLowerCase())
-                            || user.getEmail().toLowerCase().contains(s.toLowerCase())) {
+                                || user.getEmail().toLowerCase().contains(s.toLowerCase())) {
 
                             userList.add(user);
                         }
@@ -143,7 +140,7 @@ public class FriendFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    /*inflate options menu*/
+    //inflate options menu
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu, menu);
@@ -152,7 +149,6 @@ public class FriendFragment extends Fragment {
 
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -181,27 +177,4 @@ public class FriendFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /*handle menu item clicks*/
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //get item id
-        int id = item.getItemId();
-        if (id == R.id.action_logout) {
-            mAuth.signOut();
-            checkUserStatus();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void checkUserStatus() {
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        if (user != null) {
-
-        }
-        else {
-            startActivity(new Intent(getActivity(), MainActivity.class));
-            getActivity().finish();
-        }
-    }
 }

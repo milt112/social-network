@@ -20,10 +20,10 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.socialnetwork.Activities.MainActivity;
+import com.example.socialnetwork.Activities.PostActivity;
 import com.example.socialnetwork.Adapter.PostAdapter;
-import com.example.socialnetwork.MainActivity;
 import com.example.socialnetwork.Model.Post;
-import com.example.socialnetwork.PostActivity;
 import com.example.socialnetwork.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -68,20 +68,20 @@ public class HomeFragment extends Fragment {
         postList = new ArrayList<>();
 
         loadPost();
-        
+
         return view;
     }
 
     private void loadPost() {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post post = ds.getValue(Post.class);
-                    postList.add(post); 
+                    postList.add(post);
 
                     postAdapter = new PostAdapter(getActivity(), postList);
 
@@ -91,11 +91,11 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
-        
+
     }
 
     private void searchPost(String searchQuery) {
@@ -171,8 +171,6 @@ public class HomeFragment extends Fragment {
 
         super.onCreateOptionsMenu(menu, inflater);
     }
-
-    /*handle menu item clicks*/
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         //get item id
@@ -198,4 +196,5 @@ public class HomeFragment extends Fragment {
             getActivity().finish();
         }
     }
+
 }

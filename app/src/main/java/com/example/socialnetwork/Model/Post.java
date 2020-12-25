@@ -1,22 +1,22 @@
 package com.example.socialnetwork.Model;
 
-public class Post {
+import java.util.HashMap;
 
-    String pId, pTitle, pDescr, pImage, pTime, uid, uEmail, uDp, uName;
+public class Post {
+    String pId, pTitle, pDescr, pImage, uid, pLike, commentCount;
 
     public Post() {
     }
 
-    public Post(String pId, String pTitle, String pDescr, String pImage, String pTime, String uid, String uEmail, String uDp, String uName) {
+    public Post(String pId, String pTitle, String pDescr,
+                String pImage, String uid, String pLike, String commentCount) {
         this.pId = pId;
         this.pTitle = pTitle;
         this.pDescr = pDescr;
         this.pImage = pImage;
-        this.pTime = pTime;
         this.uid = uid;
-        this.uEmail = uEmail;
-        this.uDp = uDp;
-        this.uName = uName;
+        this.pLike = pLike;
+        this.commentCount = commentCount;
     }
 
     public String getpId() {
@@ -51,14 +51,6 @@ public class Post {
         this.pImage = pImage;
     }
 
-    public String getpTime() {
-        return pTime;
-    }
-
-    public void setpTime(String pTime) {
-        this.pTime = pTime;
-    }
-
     public String getUid() {
         return uid;
     }
@@ -67,27 +59,31 @@ public class Post {
         this.uid = uid;
     }
 
-    public String getuEmail() {
-        return uEmail;
+    public String getpLike() {
+        return pLike;
     }
 
-    public void setuEmail(String uEmail) {
-        this.uEmail = uEmail;
+    public void setpLike(String pLike) {
+        this.pLike = pLike;
     }
 
-    public String getuDp() {
-        return uDp;
+    public String getCommentCount() {
+        return commentCount;
     }
 
-    public void setuDp(String uDp) {
-        this.uDp = uDp;
+    public void setCommentCount(String commentCount) {
+        this.commentCount = commentCount;
     }
 
-    public String getuName() {
-        return uName;
-    }
-
-    public void setuName(String uName) {
-        this.uName = uName;
+    public HashMap<String, Object> toMap() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("uid", this.uid);
+        map.put("pId", this.pId);
+        map.put("pTitle", this.pTitle);
+        map.put("pDescr", this.pDescr);
+        map.put("pImage", this.pImage);
+        map.put("pLike", this.pLike);
+        map.put("commentCount", this.commentCount);
+        return map;
     }
 }

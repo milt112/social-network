@@ -13,4 +13,8 @@
         android:title="Friends"
         android:icon="@drawable/ic_users" />
 
+    <item android:id="@+id/nav_group"
+        android:title="Group"
+        android:icon="@drawable/ic_base_group" />
+
 </menu>

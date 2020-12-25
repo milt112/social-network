@@ -26,7 +26,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,10 +33,10 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.socialnetwork.Activities.MainActivity;
+import com.example.socialnetwork.Activities.PostActivity;
 import com.example.socialnetwork.Adapter.PostAdapter;
-import com.example.socialnetwork.MainActivity;
 import com.example.socialnetwork.Model.Post;
-import com.example.socialnetwork.PostActivity;
 import com.example.socialnetwork.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -64,9 +63,10 @@ import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
+ * Use the {@link ProfileFragment} factory method to
+ * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-
     FirebaseAuth mAuth;
     FirebaseUser mUser;
     FirebaseDatabase database;
@@ -78,7 +78,6 @@ public class ProfileFragment extends Fragment {
     ImageView avtProf, coverPrf;
     TextView nameProf, emailProf, phonePrf;
     FloatingActionButton fab;
-    RecyclerView postRecView;
 
     ProgressDialog progressDialog;
 
@@ -87,16 +86,17 @@ public class ProfileFragment extends Fragment {
     private static final int IMAGE_PICK_GALLERY_CODE = 300;
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
 
-    String cameraPermissions[];
-    String storagePermissions[];
-
-    List<Post> postList;
-    PostAdapter postAdapter;
-    String uid;
+    String[] cameraPermissions;
+    String[] storagePermissions;
 
     Uri image_uri;
+    String uid;
 
     String profileOrCover;
+
+    RecyclerView recyclerView;
+    List<Post> postList;
+    PostAdapter postAdapter;
 
     public ProfileFragment() {
 
@@ -123,7 +123,6 @@ public class ProfileFragment extends Fragment {
         phonePrf = view.findViewById(R.id.phone_prof);
         coverPrf = view.findViewById(R.id.cover_pic);
         fab = view.findViewById(R.id.fab);
-        postRecView = view.findViewById(R.id.recyclerview_post);
 
         progressDialog = new ProgressDialog(getActivity());
 
@@ -173,42 +172,42 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        postList = new ArrayList<>();
-
-        checkUserStatus();
-        loadMyPost();
-        
-        return view;
-    }
-
-    private void loadMyPost() {
+        recyclerView = view.findViewById(R.id.profile_post_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
 
-        postRecView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
 
+        postList = new ArrayList<>();
+
+        checkUserStatus();
+        loadPost();
+
+        return view;
+    }
+
+    private void loadPost() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-
-        Query query = ref.orderByChild("uid").equalTo(uid);
-
-        query.addValueEventListener(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    Post myPost = ds.getValue(Post.class);
-
-                    postList.add(myPost);
+                    Post post = ds.getValue(Post.class);
+                    if (post.getUid().equals(mUser.getUid())) {
+                        postList.add(post);
+                    }
 
                     postAdapter = new PostAdapter(getActivity(), postList);
-                    postRecView.setAdapter(postAdapter);
+
+                    recyclerView.setAdapter(postAdapter);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -218,7 +217,7 @@ public class ProfileFragment extends Fragment {
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
 
-        postRecView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
 
@@ -232,14 +231,14 @@ public class ProfileFragment extends Fragment {
                     Post myPost = ds.getValue(Post.class);
 
                     if (myPost.getpTitle().toLowerCase().contains(searchQuery.toLowerCase()) ||
-                         myPost.getpDescr().toLowerCase().contains(searchQuery.toLowerCase())) {
+                            myPost.getpDescr().toLowerCase().contains(searchQuery.toLowerCase())) {
                         postList.add(myPost);
 
                     }
 
 
                     postAdapter = new PostAdapter(getActivity(), postList);
-                    postRecView.setAdapter(postAdapter);
+                    recyclerView.setAdapter(postAdapter);
                 }
             }
 
@@ -274,7 +273,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void showEditProfileDialog() {
-        String options[] = {"Edit Profile Picture", "Edit Cover Photo", "Edit Name", "Edit Phone"};
+        String[] options = {"Edit Profile Picture", "Edit Cover Photo", "Edit Name", "Edit Phone"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -388,7 +387,7 @@ public class ProfileFragment extends Fragment {
 
 
     private void showImagePicDialog() {
-        String options[] = {"Camera", "Gallery"};
+        String[] options = {"Camera", "Gallery"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -435,9 +434,6 @@ public class ProfileFragment extends Fragment {
                         Toast.makeText(getActivity(), "Please enable camera permission", Toast.LENGTH_SHORT).show();
                     }
                 }
-                else {
-
-                }
             }
             break;
             case STORAGE_REQUEST_CODE: {
@@ -481,57 +477,57 @@ public class ProfileFragment extends Fragment {
 
         StorageReference storageReference2 = storageReference.child(filePathAndName);
         storageReference2.putFile(image_uri)
-            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                    while (!uriTask.isSuccessful());
-                    Uri downloadUri = uriTask.getResult();
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                        while (!uriTask.isSuccessful());
+                        Uri downloadUri = uriTask.getResult();
 
-                    if (uriTask.isSuccessful()) {
-                        //image upload
-                        HashMap<String, Object> results = new HashMap<>();
-                        results.put(profileOrCover, downloadUri.toString());
-                        reference.child(mUser.getUid()).updateChildren(results)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(getActivity(), "Image Updated...", Toast.LENGTH_SHORT).show();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                progressDialog.dismiss();
-                                Toast.makeText(getActivity(), "Error Updated...", Toast.LENGTH_SHORT).show();
-
-                            }
-                        });
-                        if (profileOrCover.equals("image")) {
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
-                            Query query = ref.orderByChild("uid").equalTo(uid);
-                            query.addValueEventListener(new ValueEventListener() {
+                        if (uriTask.isSuccessful()) {
+                            //image upload
+                            HashMap<String, Object> results = new HashMap<>();
+                            results.put(profileOrCover, downloadUri.toString());
+                            reference.child(mUser.getUid()).updateChildren(results)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(getActivity(), "Image Updated...", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
                                 @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    for (DataSnapshot ds : snapshot.getChildren()) {
-                                        String child = ds.getKey();
-                                        snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
+                                public void onFailure(@NonNull Exception e) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getActivity(), "Error Updated...", Toast.LENGTH_SHORT).show();
 
                                 }
                             });
+                            if (profileOrCover.equals("image")) {
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                                Query query = ref.orderByChild("uid").equalTo(uid);
+                                query.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot ds : snapshot.getChildren()) {
+                                            String child = ds.getKey();
+                                            snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+                        }
+                        else {
+                            progressDialog.dismiss();
+                            Toast.makeText(getActivity(), "Some error occurred", Toast.LENGTH_SHORT).show();
                         }
                     }
-                    else {
-                        progressDialog.dismiss();
-                        Toast.makeText(getActivity(), "Some error occurred", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 progressDialog.dismiss();
@@ -557,7 +553,6 @@ public class ProfileFragment extends Fragment {
         startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true); //to show menu option
@@ -581,7 +576,7 @@ public class ProfileFragment extends Fragment {
                     searchMyPost(query);
                 }
                 else {
-                    loadMyPost();
+                    loadPost();
                 }
 
                 return false;
@@ -593,7 +588,7 @@ public class ProfileFragment extends Fragment {
                     searchMyPost(query);
                 }
                 else {
-                    loadMyPost();
+                    loadPost();
                 }
 
                 return false;

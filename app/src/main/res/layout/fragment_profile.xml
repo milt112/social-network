@@ -3,15 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#72A8AA"
+    android:background="@color/white"
     tools:context=".Fragment.ProfileFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <ScrollView
+        android:id="@+id/profile_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
@@ -20,12 +22,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:scaleType="fitXY"
-                android:background="@color/teal_700" >
+                android:background="#80DEEA" >
 
             </ImageView>
 
             <LinearLayout
-                android:id="@+id/linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:orientation="horizontal"
@@ -35,33 +36,30 @@
                     android:id="@+id/avatar_prof"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:layout_marginLeft="20dp"
-                    android:background="@color/white"
-                    android:padding="5dp"
-                    android:src="@drawable/ic_default"/>
+                    android:layout_marginStart="20dp"
+                    android:background="#EF9A9A"
+                    android:src="@drawable/ic_default"
+                    android:scaleType="centerCrop"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="#770">
+                    android:orientation="vertical" >
 
                     <TextView
                         android:id="@+id/name_prof"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:layout_marginLeft="5dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
-                        android:textSize="25dp"/>
+                        android:textSize="25sp"/>
 
                     <TextView
                         android:id="@+id/email_prof"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:layout_marginLeft="5dp"
                         android:layout_marginStart="5dp"/>
 
                     <TextView
@@ -69,20 +67,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:layout_marginLeft="5dp"
                         android:layout_marginStart="5dp"/>
 
                 </LinearLayout>
 
             </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerview_post"
-                android:layout_below="@id/linear_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-            </androidx.recyclerview.widget.RecyclerView>
 
         </RelativeLayout>
 
@@ -95,6 +84,11 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="10dp"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/ic_edit"/>
+        android:src="@drawable/ic_edit" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@+id/profile_info"
+        android:id="@+id/profile_post_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>
