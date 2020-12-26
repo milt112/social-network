@@ -1,0 +1,48 @@
+package com.example.socialnetwork.Activities;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+import com.example.socialnetwork.R;
+
+public class MainActivity extends BaseActivity {
+
+    Button login_btn, register_btn;
+
+    @Override
+    protected void onResume() {
+        setupUI(findViewById(R.id.layout_main));
+        super.onResume();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        login_btn = findViewById(R.id.login);
+        register_btn = findViewById(R.id.register);
+
+        login_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish();
+            }
+        });
+
+        register_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+            }
+        });
+    }
+
+    @Override
+    public void initView() {
+
+    }
+}
