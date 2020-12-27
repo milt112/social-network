@@ -18,7 +18,8 @@
         <activity android:name=".Activities.PeopleActivity" />
         <activity android:name=".Activities.EditPostActivity" />
         <activity android:name=".Activities.CreateGroupActivity" />
-        <activity android:name=".Activities.GroupActivity" /> <!-- <activity android:name=".BaseActivity"></activity> -->
+        <activity android:name=".Activities.GroupActivity" />
+        <activity android:name=".Activities.BaseActivity" />
         <activity android:name=".Activities.PostActivity" />
         <activity android:name=".Activities.DashboardActivity" >
             <intent-filter>

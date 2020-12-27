@@ -114,6 +114,7 @@ public class PostDetailActivity extends BaseActivity {
         this.postId = this.getIntent().getStringExtra("postId");
         //clickedPost for postAdapter
         this.postArrayList = new ArrayList<>();
+        this.postArrayList.add(new Post());
         //Array for commentAdapter
         this.commentArrayList = new ArrayList<>();
         //Adapter
@@ -171,11 +172,10 @@ public class PostDetailActivity extends BaseActivity {
 
     private void loadClickedPost() {
         DatabaseReference clickedPostRef = postsRef.child(this.postId);
-        clickedPostRef.addValueEventListener(new ValueEventListener() {
+        clickedPostRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                postArrayList.clear();
-                postArrayList.add(dataSnapshot.getValue(Post.class));
+                postArrayList.set(0, dataSnapshot.getValue(Post.class));
                 postRecyclerView.setAdapter(postAdapter);
             }
 
@@ -233,7 +233,6 @@ public class PostDetailActivity extends BaseActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        commentArrayList.add(newComment);
                         updateCommentsCount();
                         makeToast("Comment added");
                     }
@@ -279,6 +278,7 @@ public class PostDetailActivity extends BaseActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postArrayList.get(0).setCommentCount(""+ snapshot.getChildrenCount());
                 clickedPostRef.child("commentCount").setValue(""+postArrayList.get(0).getCommentCount());
+                postAdapter.notifyItemChanged(0);
             }
 
             @Override

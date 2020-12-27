@@ -89,8 +89,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         calendar.setTimeInMillis(Long.parseLong(pId));
         String postTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
-        DatabaseReference postedUserRef = userRef.child(mUid);
-        postedUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference postedUserRef = userRef.child(uid);
+        postedUserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
@@ -179,8 +179,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
                             } else {
                                 clickedPostLikeRef.child(mUid).setValue("Liked");
                             }
-                            updateLikesCount(holder, clickedPostLikeRef);
                             setLikeButton(holder, clickedPostLikeRef);
+                            updateLikesCount(holder, pId,  clickedPostLikeRef);
                             processLike = false;
                         }
                     }
@@ -193,13 +193,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         });
 
     }
+/*
+    private Like buildLike(){
+        Like like = new Like();
+        like.setCreatedDate(String.valueOf(System.currentTimeMillis()));
+        like.setuId(mUid);
+        return like;
+    }
 
-    private void updateLikesCount(MyHolder holder, DatabaseReference clickedPostLikeRef) {
+ */
+
+    private void updateLikesCount(MyHolder holder, String pId, DatabaseReference clickedPostLikeRef) {
+        DatabaseReference clickedPostRef = postRef.child(pId);
         clickedPostLikeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String likes = ""+ snapshot.getChildrenCount();
-                postRef.child("likeCount").setValue(""+likes);
+                clickedPostRef.child("likeCount").setValue(""+likes);
                 holder.postLike.setText(String.format("%s Likes", likes));
             }
 
