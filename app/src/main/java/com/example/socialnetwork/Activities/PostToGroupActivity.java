@@ -39,7 +39,7 @@ public class PostToGroupActivity extends PostActivity {
                             String downloadUri = uriTask.getResult().toString();
 
                             if (uriTask.isSuccessful()) {
-                                Post post = new Post(timeStamp, title, description, downloadUri, uid, "0", "0");
+                                Post post = new Post(timeStamp, title, timeStamp, description, downloadUri, uid, "0", "0");
                                 HashMap<String, Object> hashMap = post.toMap();
 
                                 FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -72,7 +72,7 @@ public class PostToGroupActivity extends PostActivity {
             });
         }
         else {
-            Post post = new Post(timeStamp, title, description, "noImage", uid, "0", "0");
+            Post post = new Post(timeStamp, title, timeStamp, description, "noImage", uid, "0", "0");
             HashMap<String, Object> hashMap = post.toMap();
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Groups").child(groupId);
             ref.child("post").child(timeStamp).setValue(hashMap)

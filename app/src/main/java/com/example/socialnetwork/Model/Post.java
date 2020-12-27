@@ -3,19 +3,21 @@ package com.example.socialnetwork.Model;
 import java.util.HashMap;
 
 public class Post {
-    String pId, pTitle, pDescr, pImage, uid, pLike, commentCount;
+    String pId, pTitle, pTime, pDescr, pImage, uid, likeCount, commentCount;
 
     public Post() {
     }
 
-    public Post(String pId, String pTitle, String pDescr,
-                String pImage, String uid, String pLike, String commentCount) {
+    public Post(String pId, String pTitle, String pTime, String pDescr, String pImage,
+                String uid,
+                String likeCount, String commentCount) {
         this.pId = pId;
         this.pTitle = pTitle;
+        this.pTime = pTime;
         this.pDescr = pDescr;
         this.pImage = pImage;
         this.uid = uid;
-        this.pLike = pLike;
+        this.likeCount = likeCount;
         this.commentCount = commentCount;
     }
 
@@ -33,6 +35,14 @@ public class Post {
 
     public void setpTitle(String pTitle) {
         this.pTitle = pTitle;
+    }
+
+    public String getpTime() {
+        return pTime;
+    }
+
+    public void setpTime(String pTime) {
+        this.pTime = pTime;
     }
 
     public String getpDescr() {
@@ -59,12 +69,12 @@ public class Post {
         this.uid = uid;
     }
 
-    public String getpLike() {
-        return pLike;
+    public String getLikeCount() {
+        return likeCount;
     }
 
-    public void setpLike(String pLike) {
-        this.pLike = pLike;
+    public void setLikeCount(String likeCount) {
+        this.likeCount = likeCount;
     }
 
     public String getCommentCount() {
@@ -77,13 +87,14 @@ public class Post {
 
     public HashMap<String, Object> toMap() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("uid", this.uid);
-        map.put("pId", this.pId);
-        map.put("pTitle", this.pTitle);
-        map.put("pDescr", this.pDescr);
-        map.put("pImage", this.pImage);
-        map.put("pLike", this.pLike);
-        map.put("commentCount", this.commentCount);
+        map.put("uid", getUid());
+        map.put("pId", getpId());
+        map.put("pTitle", getpTitle());
+        map.put("pTime", getpTime());
+        map.put("pDescr", getpDescr());
+        map.put("pImage", getpImage());
+        map.put("likeCount", getLikeCount());
+        map.put("commentCount", getCommentCount());
         return map;
     }
 }

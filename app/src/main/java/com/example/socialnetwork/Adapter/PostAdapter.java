@@ -81,7 +81,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         String pTitle = postList.get(position).getpTitle();
         String pDescr = postList.get(position).getpDescr();
         String pImage = postList.get(position).getpImage();
-        String pLike = postList.get(position).getpLike();
+        String pLike = postList.get(position).getLikeCount();
         String pComment = postList.get(position).getCommentCount();
 
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
@@ -147,15 +147,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
             }
         });
 
-        holder.commentBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, PostDetailActivity.class);
-                intent.putExtra("postId", pId);
-                Log.d("!111111111", pId);
-                context.startActivity(intent);
-            }
-        });
+        if(context.getClass().equals(PostDetailActivity.class)) {
+            holder.commentBtn.setActivated(false);
+            holder.commentBtn.setText("");
+            holder.commentBtn.setClickable(false);
+            holder.commentBtn.setCompoundDrawables(null, null, null, null);
+        } else {
+            holder.commentBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, PostDetailActivity.class);
+                    intent.putExtra("postId", pId);
+                    Log.d("!111111111", pId);
+                    context.startActivity(intent);
+                }
+            });
+        }
 
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             long pLike;

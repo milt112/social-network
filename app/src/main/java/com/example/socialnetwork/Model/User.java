@@ -77,11 +77,12 @@ public class User {
     public HashMap<String, String> toMap() {
         HashMap<String, String> map = new HashMap<>();
         map.put("email", email);
+        map.put("search", search);//DELETE
         map.put("uid", uid);
-        map.put("name", "");
-        map.put("phone", "");
-        map.put("image", "");
-        map.put("cover", "");
+        map.put("name", name);
+        map.put("phone", phone);
+        map.put("image", image);
+        map.put("cover", cover);
         return map;
     }
 }
