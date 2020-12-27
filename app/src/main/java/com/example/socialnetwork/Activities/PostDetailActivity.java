@@ -114,7 +114,6 @@ public class PostDetailActivity extends BaseActivity {
         this.postId = this.getIntent().getStringExtra("postId");
         //clickedPost for postAdapter
         this.postArrayList = new ArrayList<>();
-        postArrayList.add(new Post());
         //Array for commentAdapter
         this.commentArrayList = new ArrayList<>();
         //Adapter
@@ -154,6 +153,7 @@ public class PostDetailActivity extends BaseActivity {
         clickedPostCommentRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                commentArrayList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Comment comment = ds.getValue(Comment.class);
                     commentArrayList.add(comment);
@@ -174,7 +174,8 @@ public class PostDetailActivity extends BaseActivity {
         clickedPostRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                postArrayList.set(0, dataSnapshot.getValue(Post.class));
+                postArrayList.clear();
+                postArrayList.add(dataSnapshot.getValue(Post.class));
                 postRecyclerView.setAdapter(postAdapter);
             }
 

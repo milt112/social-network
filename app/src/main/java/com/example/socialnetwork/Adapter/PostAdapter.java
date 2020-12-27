@@ -25,6 +25,7 @@ import com.example.socialnetwork.Activities.EditPostActivity;
 import com.example.socialnetwork.Activities.PeopleActivity;
 import com.example.socialnetwork.Activities.PostDetailActivity;
 import com.example.socialnetwork.Model.Post;
+import com.example.socialnetwork.Model.User;
 import com.example.socialnetwork.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -88,20 +89,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         calendar.setTimeInMillis(Long.parseLong(pId));
         String postTime = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
 
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            String name;
-            String avatar;
+        DatabaseReference postedUserRef = userRef.child(mUid);
+        postedUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                name = (String) snapshot.child(uid).child("name").getValue();
-                if (name.equals("")) name = (String) snapshot.child(uid).child("email").getValue();
-                holder.usName.setText(name);
-                avatar = (String) snapshot.child(uid).child("image").getValue();
+                User user = snapshot.getValue(User.class);
+                holder.usName.setText(user.getName());
                 try {
-                    Picasso.get().load(avatar).placeholder(R.drawable.ic_default_img).into(holder.usPic);
+                    Picasso.get().load(user.getImage()).placeholder(R.drawable.ic_default_img).into(holder.usPic);
                 }
                 catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             }
 
@@ -113,10 +111,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         holder.postTime.setText(postTime);
         holder.postTitle.setText(pTitle);
         holder.postDes.setText(pDescr);
-        holder.postLike.setText(pLike + " Likes");
-        holder.postComment.setText(pComment + " Comments");
-
-        setLikeButton(holder, pId);
+        holder.postLike.setText(String.format("%s Likes", pLike));
+        holder.postComment.setText(String.format("%s Comments", pComment));
 
         if (pImage.equals("noImage")) {
             holder.postImage.setVisibility(View.GONE);
@@ -131,14 +127,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
             }
         }
 
-        holder.usPic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, PeopleActivity.class);
-                intent.putExtra("uid", uid);
-                context.startActivity(intent);
-            }
-        });
+        if(context.getClass().equals(PostDetailActivity.class)
+                ||context.getClass().equals(PeopleActivity.class)){
+            holder.usPic.setActivated(false);
+        }else{
+            holder.usPic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, PeopleActivity.class);
+                    intent.putExtra("uid", uid);
+                    context.startActivity(intent);
+                }
+            });
+        }
 
         holder.moreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,42 +166,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         }
 
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
-            long pLike;
             @Override
             public void onClick(View v) {
-                String postId = postList.get(position).getpId();
-                likeRef.child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        pLike = snapshot.getChildrenCount();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
                 processLike = true;
-                likeRef.addValueEventListener(new ValueEventListener() {
+                DatabaseReference clickedPostLikeRef = likeRef.child(pId);
+                clickedPostLikeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (processLike) {
-                            if (snapshot.child(postId).hasChild(mUid)) {
-                                pLike--;
-                                postRef.child(postId).child("pLike").setValue("" + (pLike));
-                                likeRef.child(postId).child(mUid).removeValue();
+                            if (snapshot.hasChild(mUid)) {
+                                clickedPostLikeRef.child(mUid).removeValue();
                             } else {
-                                pLike++;
-                                postRef.child(postId).child("pLike").setValue("" + (pLike));
-                                likeRef.child(postId).child(mUid).setValue("Liked");
-
+                                clickedPostLikeRef.child(mUid).setValue("Liked");
                             }
+                            updateLikesCount(holder, clickedPostLikeRef);
+                            setLikeButton(holder, clickedPostLikeRef);
                             processLike = false;
-
-                            holder.postLike.setText(pLike + " Likes");
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
@@ -211,11 +194,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
 
     }
 
-    private void setLikeButton(MyHolder holder, String pId) {
-        likeRef.addValueEventListener(new ValueEventListener() {
+    private void updateLikesCount(MyHolder holder, DatabaseReference clickedPostLikeRef) {
+        clickedPostLikeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child(pId).hasChild(mUid)) {
+                String likes = ""+ snapshot.getChildrenCount();
+                postRef.child("likesCount").setValue(""+likes);
+                holder.postLike.setText(String.format("%s Likes", likes));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void setLikeButton(MyHolder holder, DatabaseReference clickedPostLikeRef) {
+        clickedPostLikeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChild(mUid)) {
                     holder.likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
                     holder.likeBtn.setText("Liked");
                 }

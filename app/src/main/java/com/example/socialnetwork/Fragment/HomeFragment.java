@@ -72,6 +72,12 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.loadPost();
+    }
+
     private void loadPost() {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
