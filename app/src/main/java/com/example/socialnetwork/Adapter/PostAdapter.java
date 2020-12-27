@@ -199,7 +199,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String likes = ""+ snapshot.getChildrenCount();
-                postRef.child("likesCount").setValue(""+likes);
+                postRef.child("likeCount").setValue(""+likes);
                 holder.postLike.setText(String.format("%s Likes", likes));
             }
 
