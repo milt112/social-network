@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.example.socialnetwork.Fragment.FriendFragment;
+import com.example.socialnetwork.Fragment.FriendListFragment;
 import com.example.socialnetwork.Fragment.GroupFragment;
 import com.example.socialnetwork.Fragment.HomeFragment;
 import com.example.socialnetwork.Fragment.ProfileFragment;
@@ -49,6 +50,7 @@ public class DashboardActivity extends BaseActivity {
                     HomeFragment homeFragment = new HomeFragment();
                     ProfileFragment profileFragment = new ProfileFragment();
                     FriendFragment friendFragment = new FriendFragment();
+                    FriendListFragment friendRequestFragment = new FriendListFragment();
                     GroupFragment groupFragment = new GroupFragment();
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -62,14 +64,17 @@ public class DashboardActivity extends BaseActivity {
                                 loadFragment(profileFragment);
                                 return true;
                             case R.id.nav_friend:
-                                setActionBarTitle("People");
-                                loadFragment(friendFragment);
+                                setActionBarTitle("Friend");
+                                loadFragment(friendRequestFragment);
                                 return true;
                             case R.id.nav_group:
                                 setActionBarTitle("Group");
                                 loadFragment(groupFragment);
                                 return true;
-
+                            case R.id.nav_people:
+                                setActionBarTitle("People");
+                                loadFragment(friendFragment);
+                                return true;
                         }
                         return false;
                     }

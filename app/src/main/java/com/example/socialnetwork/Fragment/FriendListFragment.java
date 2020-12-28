@@ -1,5 +1,6 @@
 package com.example.socialnetwork.Fragment;
 
+import android.app.VoiceInteractor;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -9,16 +10,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.socialnetwork.Activities.PostDetailActivity;
+import com.example.socialnetwork.Adapter.CommentAdapter;
 import com.example.socialnetwork.Adapter.FriendAdapter;
+import com.example.socialnetwork.Adapter.RequestAdapter;
 import com.example.socialnetwork.Adapter.UserAdapter;
+import com.example.socialnetwork.Model.Comment;
 import com.example.socialnetwork.Model.FriendRequest;
 import com.example.socialnetwork.Model.User;
 import com.example.socialnetwork.R;
@@ -33,24 +40,26 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-class FriendListFragment extends Fragment {
+public class FriendListFragment extends Fragment {
     //Recycler view for friend list
     RecyclerView friendListRecyclerView;
     FriendAdapter FriendAdapter;
-    ArrayList<FriendRequest> friendRequestList; // FRIEND
+    ArrayList<FriendRequest> friendList; // FRIEND
     //Recycler view for friend Request
     RecyclerView friendRequestRecyclerView;
-    FriendAdapter FriendRequestAdapter;
+    LinearLayoutManager friendRequestLayoutManager;
+    RequestAdapter friendRequestAdapter;
     ArrayList<FriendRequest> newFriendRequestList;
     //Check current user
-    FirebaseAuth mAuth;
+    FirebaseUser currentUser;
     //Firebase Database Reference
     DatabaseReference userRef;
     DatabaseReference requestRef;
-    DatabaseReference currentUserRef;
+    DatabaseReference friendRef;
     DatabaseReference currentUserRequestRef;
-    DatabaseReference requestedToUserRef;
-    DatabaseReference requestedUserRequestRef;
+    DatabaseReference currentUserFriendRef;
+    DatabaseReference anotherUserRequestRef;
+    DatabaseReference anotherUserFriendRef;
     //Search menu item
     MenuItem searchItem;
     SearchView searchView;
@@ -66,7 +75,7 @@ class FriendListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_friend_list, container, false);
         //Initial
         this.initField();
-        this.initView();
+        this.initView(view);
         this.initDataBaseReference();
         this.initFireBaseAuth();
         //Get current User
@@ -75,23 +84,51 @@ class FriendListFragment extends Fragment {
         //Setup
         this.setUpViewConfig();
 
+        //Loading
+        this.loadAllFriend();
+        this.loadAllRequest();
+
         return view;
     }
 
+    private void loadAllRequest() {
+        this.currentUserRequestRef = this.requestRef.child(currentUser.getUid());
+        this.currentUserRequestRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                newFriendRequestList.clear();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    FriendRequest request = ds.getValue(FriendRequest.class);
+                    newFriendRequestList.add(request);
+                }
+                friendRequestRecyclerView.setAdapter(friendRequestAdapter);
+             }
+             @Override
+             public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void initField() {
+        this.newFriendRequestList = new ArrayList<>();
+        this.friendRequestAdapter = new RequestAdapter(newFriendRequestList, getActivity());
 
     }
 
-    private void initView() {
-
+    private void initView(View view) {
+        this.friendRequestRecyclerView = view.findViewById(R.id.friend_request_recycler_view);
+        this.friendRequestLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL,false);
     }
 
     private void initDataBaseReference() {
-
+        this.userRef = FirebaseDatabase.getInstance().getReference("Users");
+        this.requestRef = FirebaseDatabase.getInstance().getReference("Requests");
+        this.friendRef = FirebaseDatabase.getInstance().getReference("Friends");
     }
 
     private void initFireBaseAuth() {
-
+        this.currentUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     private void getCurrentUserStatus() {
@@ -103,7 +140,10 @@ class FriendListFragment extends Fragment {
     }
 
     private void setUpViewConfig() {
-
+        friendRequestRecyclerView.setHasFixedSize(true);
+        friendRequestRecyclerView.setLayoutManager(friendRequestLayoutManager);
+        friendRequestRecyclerView.addItemDecoration(
+                new DividerItemDecoration(getActivity(), friendRequestLayoutManager.getOrientation()));
     }
 
     @Override
@@ -128,7 +168,7 @@ class FriendListFragment extends Fragment {
                     searchFriend(query);
                 }
                 else {
-                    getAllFriend();
+                    loadAllFriend();
                 }
 
                 return false;
@@ -140,7 +180,7 @@ class FriendListFragment extends Fragment {
                     searchFriend(query);
                 }
                 else {
-                    getAllFriend();
+                    loadAllFriend();
                 }
                 return false;
             }
@@ -151,7 +191,7 @@ class FriendListFragment extends Fragment {
     private void searchFriend(String query) {
     }
 
-    private void getAllFriend() {
+    private void loadAllFriend() {
 
     }
 

@@ -177,6 +177,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
                             if (snapshot.hasChild(mUid)) {
                                 clickedPostLikeRef.child(mUid).removeValue();
                             } else {
+                                //Like newLike = buildLike(mUid, pId); //UPDATE IN FUTURE
                                 clickedPostLikeRef.child(mUid).setValue("Liked");
                             }
                             setLikeButton(holder, clickedPostLikeRef);
@@ -193,15 +194,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder>{
         });
 
     }
-/*
-    private Like buildLike(){
+
+    /*
+    private Like buildLike(String mUid, String pId){
         Like like = new Like();
         like.setCreatedDate(String.valueOf(System.currentTimeMillis()));
         like.setuId(mUid);
+        like.setpId(pId);
         return like;
     }
-
- */
+    */
 
     private void updateLikesCount(MyHolder holder, String pId, DatabaseReference clickedPostLikeRef) {
         DatabaseReference clickedPostRef = postRef.child(pId);
