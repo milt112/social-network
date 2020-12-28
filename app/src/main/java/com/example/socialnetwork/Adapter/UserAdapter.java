@@ -105,7 +105,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyHolder>{
     private void updateRequestOnAnotherUser(MyHolder holder, String mUid, String uId) {
         DatabaseReference anotherUserRequestRef = requestRef.child(uId);
         FriendRequest anotherUserRequest = buildRequest(uId, mUid, TYPE_REQUEST.WAITING_ACCEPT);
-        anotherUserRequestRef.child(uId).setValue(anotherUserRequest)
+        anotherUserRequestRef.child(mUid).setValue(anotherUserRequest)
                 .addOnSuccessListener(aVoid -> {
                     makeToast("Added Request");
                     muteRequestButton(holder);
