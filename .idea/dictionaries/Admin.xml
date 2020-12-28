@@ -2,9 +2,12 @@
   <dictionary name="Admin">
     <words>
       <w>descr</w>
+      <w>getm</w>
       <w>getp</w>
       <w>getu</w>
+      <w>setm</w>
       <w>setp</w>
+      <w>setu</w>
     </words>
   </dictionary>
 </component>
