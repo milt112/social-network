@@ -62,7 +62,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.MyHolder
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         FriendRequest request = this.requestArrayList.get(position);
-        this.anotherUserRef = this.userRef.child(request.getmUid());
+        this.anotherUserRef = this.userRef.child(request.getuId());
         this.currentUserFriendRef = this.friendRef.child(request.getmUid());
         this.currentUserRequestRef = this.requestRef.child(request.getmUid());
         this.anotherUserFriendRef = this.friendRef.child(request.getuId());
