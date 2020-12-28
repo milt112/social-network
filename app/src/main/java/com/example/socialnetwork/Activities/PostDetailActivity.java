@@ -277,6 +277,7 @@ public class PostDetailActivity extends BaseActivity {
         });
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -285,6 +286,6 @@ public class PostDetailActivity extends BaseActivity {
         menu.findItem(R.id.action_create_group).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
-
+    */
 
 }
