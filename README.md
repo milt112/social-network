@@ -10,4 +10,5 @@ Its funtion:
 * Show home (post, like, comment) 
 * Show and search friend (another accounts) 
 * Add post
+* Add friend
 * ..etc
