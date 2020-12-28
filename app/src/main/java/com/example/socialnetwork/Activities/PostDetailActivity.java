@@ -105,8 +105,8 @@ public class PostDetailActivity extends BaseActivity {
         this.sendBtn = findViewById(R.id.sendBtn);
 
         //Comment Recycler View
-        this.commentRecyclerView = (RecyclerView)findViewById(R.id.comment_recycler_view);
-        this.postRecyclerView = (RecyclerView)findViewById(R.id.post_comment_recyclerView);
+        this.commentRecyclerView = findViewById(R.id.comment_recycler_view);
+        this.postRecyclerView = findViewById(R.id.post_comment_recyclerView);
     }
 
     private void initField() {
@@ -194,7 +194,9 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 currentUserInfo = snapshot.getValue(User.class);
-                loadImage(currentUserInfo.getImage(), cAvatarIv);
+                if (currentUserInfo != null) {
+                    loadImage(currentUserInfo.getImage(), cAvatarIv);
+                }
             }
 
             @Override
@@ -207,12 +209,7 @@ public class PostDetailActivity extends BaseActivity {
     private void setUpOnClick() {
 
         //Send button on comment post bar
-        this.sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                postComment();
-            }
-        });
+        this.sendBtn.setOnClickListener(view -> postComment());
     }
 
 
@@ -230,19 +227,11 @@ public class PostDetailActivity extends BaseActivity {
         DatabaseReference clickedPostCommentRef = commentsRef.child(postId);
         DatabaseReference postedCommentRef = clickedPostCommentRef.child(newComment.getCommentId());
         postedCommentRef.setValue(newComment.toMap())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        updateCommentsCount();
-                        makeToast("Comment added");
-                    }
+                .addOnSuccessListener(aVoid -> {
+                    updateCommentsCount();
+                    makeToast("Comment added");
                 })
-                .addOnFailureListener(new OnFailureListener(){
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        makeToast(""+e.getMessage());
-                    }
-                });
+                .addOnFailureListener(e -> makeToast(""+e.getMessage()));
 
         progressDialog.dismiss();
         this.commentEt.setText("");
@@ -278,7 +267,7 @@ public class PostDetailActivity extends BaseActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postArrayList.get(0).setCommentCount(""+ snapshot.getChildrenCount());
                 clickedPostRef.child("commentCount").setValue(""+postArrayList.get(0).getCommentCount());
-                postAdapter.notifyItemChanged(0);
+                loadClickedPost();
             }
 
             @Override
